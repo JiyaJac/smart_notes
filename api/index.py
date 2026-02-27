@@ -4,31 +4,42 @@ import os
 import re
 import urllib.request
 
+
+print("HF KEY:", os.environ.get("HUGGINGFACE_API_KEY"))
+
 from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__, template_folder="../templates")
 
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+ANTHROPIC_API_KEY = os.environ.get("HUGGINGFACE_API_KEY", "")
 
 
-def call_claude(prompt, system="You are an expert academic assistant helping students learn effectively.", max_tokens=2500):
-    url = "https://api.anthropic.com/v1/messages"
-    data = json.dumps({
-        "model": "claude-sonnet-4-6",
-        "max_tokens": max_tokens,
-        "system": system,
-        "messages": [{"role": "user", "content": prompt}]
-    }).encode("utf-8")
+def call_ai(prompt, max_tokens=500):
+    url = "https://api-inference.huggingface.co/models/google/flan-t5-large"
 
-    req = urllib.request.Request(url, data=data, method="POST")
-    req.add_header("Content-Type", "application/json")
-    req.add_header("x-api-key", ANTHROPIC_API_KEY)
-    req.add_header("anthropic-version", "2023-06-01")
+    headers = {
+        "Authorization": f"Bearer {os.environ.get('HUGGINGFACE_API_KEY')}",
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "inputs": prompt,
+        "parameters": {
+            "max_new_tokens": max_tokens
+        }
+    }
+
+    req = urllib.request.Request(
+        url,
+        data=json.dumps(data).encode("utf-8"),
+        headers=headers
+    )
 
     with urllib.request.urlopen(req) as response:
-        result = json.loads(response.read().decode("utf-8"))
-    return result["content"][0]["text"]
+        result = json.loads(response.read().decode())
+
+    return result[0]["generated_text"]
 
 
 def extract_json(text):
@@ -84,7 +95,7 @@ Return ONLY a valid JSON object with NO markdown formatting, NO extra text:
 }}"""
 
     try:
-        response = call_claude(prompt, max_tokens=2000)
+        response = call_ai(prompt, max_tokens=2000)
         result = extract_json(response)
         return jsonify(result)
     except Exception as e:
@@ -114,7 +125,7 @@ Return ONLY a valid JSON array (NO markdown, NO extra text):
 Rules: difficulty must be easy/medium/hard. Mix all levels. Test understanding not memorization."""
 
     try:
-        response = call_claude(prompt, max_tokens=2500)
+        response = call_ai(prompt, max_tokens=2500)
         result = extract_json(response)
         return jsonify(result)
     except Exception as e:
@@ -150,7 +161,7 @@ Return ONLY a valid JSON array (NO markdown, NO extra text):
 Rules: correct must be A/B/C/D. difficulty must be easy/medium/hard. Include 3 easy, 3 medium, 2 hard."""
 
     try:
-        response = call_claude(prompt, max_tokens=2500)
+        response = call_ai(prompt, max_tokens=2500)
         result = extract_json(response)
         return jsonify(result)
     except Exception as e:
@@ -213,7 +224,7 @@ Return ONLY valid JSON (NO markdown):
 performance_level: excellent(90-100%), good(70-89%), needs_improvement(50-69%), critical(below 50%)"""
 
     try:
-        ai_response = call_claude(prompt, max_tokens=800)
+        ai_response = call_ai(prompt, max_tokens=800)
         ai_feedback = extract_json(ai_response)
     except Exception:
         level = "excellent" if percentage >= 90 else "good" if percentage >= 70 else "needs_improvement" if percentage >= 50 else "critical"
@@ -231,3 +242,5 @@ performance_level: excellent(90-100%), good(70-89%), needs_improvement(50-69%), 
         "strong_topics": list(set(correct_topics)), "ai_feedback": ai_feedback
     })
 
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)
