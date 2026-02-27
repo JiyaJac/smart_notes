@@ -1451,22 +1451,22 @@ async function generateQuiz() {
     setLoading('quiz-gen-btn', false);
   }
 }
-
 function renderQuiz() {
   let html = '<div class="section-heading">Your Quiz</div>';
 
   currentQuiz.forEach((q, i) => {
+    const qId = String(q.id);  // Convert to string for consistent IDs
     const diffClass = q.difficulty || 'medium';
     const letters = ['A','B','C','D'];
     const optionsHTML = (q.options || []).map((opt, j) => `
-      <button class="q-option" onclick="selectAnswer(${q.id}, '${letters[j]}')" id="opt-${q.id}-${letters[j]}">
+      <button class="q-option" onclick="selectAnswer(${qId}, '${letters[j]}')" id="opt-${qId}-${letters[j]}">
         <span class="q-option-letter">${letters[j]}</span>
         <span>${opt}</span>
       </button>
     `).join('');
 
     html += `
-      <div class="quiz-question-card" id="qcard-${q.id}">
+      <div class="quiz-question-card" id="qcard-${qId}">
         <div class="q-header">
           <span class="q-num">Question ${i+1} of ${currentQuiz.length}</span>
           <div style="display:flex;gap:0.5rem;align-items:center">
@@ -1476,7 +1476,7 @@ function renderQuiz() {
         </div>
         <div class="q-text">${q.question}</div>
         <div class="q-options">${optionsHTML}</div>
-        <div class="q-explanation" id="exp-${q.id}">${q.explanation || ''}</div>
+        <div class="q-explanation" id="exp-${qId}">${q.explanation || ''}</div>
       </div>
     `;
   });
@@ -1553,9 +1553,12 @@ function revealAnswers(results) {
       }
     });
 
-    // Mark user's wrong answer
-    if (!r.is_correct && r.user_answer) {
-      const wrongEl = document.getElementById(`opt-${r.id}-${r.user_answer}`);
+    // Mark user's wrong answer - FIX: ensure proper type comparison
+    const userAnswer = r.user_answer ? r.user_answer.toString().toUpperCase() : '';
+    const correctAnswer = r.correct_answer ? r.correct_answer.toString().toUpperCase() : '';
+    
+    if (!r.is_correct && userAnswer) {
+      const wrongEl = document.getElementById(`opt-${r.id}-${userAnswer}`);
       if (wrongEl) {
         wrongEl.classList.remove('reveal-correct');
         wrongEl.classList.add('incorrect');

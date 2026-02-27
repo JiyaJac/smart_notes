@@ -56,19 +56,30 @@ def index():
 @app.route("/api/analyze", methods=["POST"])
 def analyze_notes():
     data = request.json
-    notes = trim_text(data.get("notes", "").strip())
+    notes = trim_text(data.get("notes", "").strip(), max_chars=10000)    
     syllabus = trim_text(data.get("syllabus", "").strip(), max_chars=2000)
 
     if not notes:
         return jsonify({"error": "Notes content is required"}), 400
 
-    prompt = f"""Analyze the student notes below against the provided syllabus topics.
+    prompt = f"""You are a careful, evidence-based academic evaluator. Your job is to analyze student notes STRICTLY based on what is actually written in them.
+
+CRITICAL RULES:
+1. ONLY mark a topic as "missing" if there is ZERO mention of it anywhere in the notes
+2. ONLY mark a topic as "partial" if it is mentioned but lacks depth or detail
+3. Mark a topic as "complete" if it is clearly explained, even briefly
+4. Do NOT assume topics are missing just because they aren't explained in detail
+5. Re-read the notes carefully before deciding any topic is "missing"
+6. If a concept is mentioned even once with some explanation, it is at minimum "partial"
+7. Be GENEROUS — students often use shorthand or bullet points
 
 STUDENT NOTES:
 {notes}
 
 SYLLABUS / EXPECTED TOPICS:
 {syllabus if syllabus else "Infer key academic topics from the notes themselves and evaluate coverage depth."}
+
+Before scoring, mentally scan the notes for each topic. Only then produce the JSON.
 
 Return ONLY a valid JSON object, no markdown, no extra text:
 {{
@@ -77,9 +88,9 @@ Return ONLY a valid JSON object, no markdown, no extra text:
   "clarity": 80,
   "structure": 75,
   "topics_covered": [
-    {{"topic": "Topic Name", "status": "complete", "explanation": "brief assessment"}},
-    {{"topic": "Topic Name", "status": "partial", "explanation": "what is missing"}},
-    {{"topic": "Topic Name", "status": "missing", "explanation": "not covered at all"}}
+    {{"topic": "Topic Name", "status": "complete", "explanation": "briefly state what the notes say about this"}},
+    {{"topic": "Topic Name", "status": "partial", "explanation": "what is present and what specific detail is missing"}},
+    {{"topic": "Topic Name", "status": "missing", "explanation": "confirm it is truly absent from the notes"}}
   ],
   "strengths": ["strength 1", "strength 2", "strength 3"],
   "weaknesses": ["weakness 1", "weakness 2"],
@@ -186,7 +197,8 @@ def evaluate_quiz():
     for q in questions:
         qid = str(q["id"])
         user_answer = answers.get(qid, "").strip().upper()
-        correct = q.get("correct", "").strip().upper()
+        # FIX: changed "correct" to "correct_answer"
+        correct = q.get("correct_answer", "").strip().upper()
         is_correct = user_answer == correct
 
         if is_correct:
@@ -199,7 +211,7 @@ def evaluate_quiz():
             "id": q["id"],
             "question": q["question"],
             "user_answer": user_answer,
-            "correct_answer": correct,
+            "correct_answer": correct,  # Also fix this key for consistency
             "is_correct": is_correct,
             "explanation": q.get("explanation", ""),
             "topic": q.get("topic", ""),
