@@ -23,8 +23,6 @@ app = Flask(__name__, template_folder="../templates")
 
 # ─── HELPERS ──────────────────────────────────────────────────────────────────
 
-# Keywords that signal academically important content
-# ─── BASE ACADEMIC KEYWORDS ─────────────────────────────────────────────
 BASE_KEYWORDS = [
     "definition", "define", "defined as", "means", "refers to", "is called",
     "known as", "also called", "termed", "described as",
@@ -69,7 +67,6 @@ _STOP_WORDS = {
 
 
 def extract_syllabus_keywords(syllabus):
-    """Extract meaningful topic words and phrases from syllabus text."""
     if not syllabus or not syllabus.strip():
         return []
     keywords = set()
@@ -90,25 +87,6 @@ def extract_syllabus_keywords(syllabus):
 
 
 def smart_trim(text, max_chars, syllabus=''):
-    """
-    Hybrid broad + priority trimming.
-
-    Pass 1 - EVEN SPREAD (60% of budget):
-        Divides notes into ~20 equal chunks and picks the best-scoring
-        line from each. Guarantees content from every section of the
-        notes reaches the AI, not just the opening pages.
-
-    Pass 2 - PRIORITY FILL (remaining 40%):
-        From lines not yet selected, picks the highest-scoring ones
-        to fill the rest of the budget. Rewards definitions,
-        syllabus-matched content, and key academic sentences.
-
-    Pass 3 - RESTORE ORDER:
-        Re-sorts all selected lines by original position so the AI
-        reads them in natural document order.
-
-    Scoring: +5 per syllabus keyword, +2 per base keyword, +1 length bonus.
-    """
     text = text.strip()
     if len(text) <= max_chars:
         return text
@@ -132,7 +110,6 @@ def smart_trim(text, max_chars, syllabus=''):
     spread_budget   = int(max_chars * 0.60)
     priority_budget = max_chars - spread_budget
 
-    # Pass 1: even spread across chunks
     chunk_size = max(20, len(lines) // 20)
     chunks = [scored_lines[i:i + chunk_size] for i in range(0, len(scored_lines), chunk_size)]
 
@@ -151,7 +128,6 @@ def smart_trim(text, max_chars, syllabus=''):
             selected_indices.add(i)
             total_chars += needed
 
-    # Pass 2: priority fill with remaining budget
     remaining_lines = [(i, line, score) for i, line, score in scored_lines
                        if i not in selected_indices]
     remaining_lines.sort(key=lambda x: x[2], reverse=True)
@@ -168,17 +144,11 @@ def smart_trim(text, max_chars, syllabus=''):
             selected.append((i, line[:remaining_budget].rstrip()))
             remaining_budget = 0
 
-    # Pass 3: restore document order
     selected.sort(key=lambda x: x[0])
     return '\n'.join(line for _, line in selected)
 
 
 def get_notes_from_request():
-    """
-    Safely parse JSON body.
-    Passes the syllabus into smart_trim so note scoring is
-    guided by the student's actual course topics.
-    """
     data = request.get_json(silent=True) or {}
     syllabus = data.get("syllabus", "").strip()
     notes = smart_trim(data.get("notes", "").strip(), MAX_NOTES_CHARS, syllabus=syllabus)
@@ -187,7 +157,6 @@ def get_notes_from_request():
 
 # ─── AI CALL ──────────────────────────────────────────────────────────────────
 def call_ai(prompt, max_tokens=800, temperature=0.3):
-    """Call Groq API with a timeout. Raises on failure."""
     completion = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
         messages=[
@@ -594,6 +563,51 @@ def summarize_notes():
     except Exception as e:
         app.logger.error("summary error: %s", e)
         return jsonify({"error": "Summary generation failed. Please try again."}), 500
+
+
+# ─── AI CHAT ROUTE (Nova Assistant) ──────────────────────────────────────────
+@app.route("/api/chat", methods=["POST"])
+def ai_chat():
+    """
+    Powers the Nova AI tutor chat panel.
+    Expects: { "system": "...", "messages": [{"role": "user"|"assistant", "content": "..."}] }
+    Returns: { "reply": "..." }
+    """
+    data = request.get_json(silent=True) or {}
+    system_prompt = data.get("system", "You are Nova, a friendly AI study tutor. Help students understand topics clearly and encouragingly.")
+    messages = data.get("messages", [])
+
+    if not messages:
+        return jsonify({"error": "No messages provided"}), 400
+
+    # Sanitize messages — only keep role/content, valid roles only
+    clean_messages = []
+    for msg in messages[-20:]:  # limit context to last 20 messages
+        role = msg.get("role", "")
+        content = str(msg.get("content", "")).strip()
+        if role in ("user", "assistant") and content:
+            clean_messages.append({"role": role, "content": content})
+
+    if not clean_messages:
+        return jsonify({"error": "No valid messages provided"}), 400
+
+    try:
+        completion = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                *clean_messages,
+            ],
+            max_tokens=1000,
+            temperature=0.6,
+            timeout=30.0,
+        )
+        reply = completion.choices[0].message.content.strip()
+        return jsonify({"reply": reply})
+
+    except Exception as e:
+        app.logger.error("chat error: %s", e)
+        return jsonify({"error": f"Chat failed: {str(e)}"}), 500
 
 
 if __name__ == "__main__":
