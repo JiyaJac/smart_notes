@@ -1384,26 +1384,44 @@ function updateFlashcard() {
 }
 
 function flipCard() {
+  const inner = document.getElementById('fc-inner');
+  if (!inner) return;
+  const isFlipped = inner.classList.contains('flipped');
   seenCards.add(currentFlashcardIndex);
-  document.getElementById('fc-inner').classList.toggle('flipped');
-  updateFlashcard();
+  // Update dots/counter WITHOUT touching the card element
+  const total = currentFlashcards.length;
+  const idx = currentFlashcardIndex;
+  const counter = document.getElementById('fc-counter');
+  if (counter) counter.textContent = `${idx+1} / ${total}`;
+  let dots = '';
+  for (let i = 0; i < total; i++) {
+    const cls = i === idx ? 'active' : seenCards.has(i) ? 'seen' : '';
+    dots += `<button class="fc-dot ${cls}" onclick="goToCard(${i})"></button>`;
+  }
+  const dotsEl = document.getElementById('fc-dots');
+  if (dotsEl) dotsEl.innerHTML = dots;
+  // Now toggle flip AFTER updating everything else
+  inner.classList.toggle('flipped', !isFlipped);
 }
 
 function nextCard() {
   seenCards.add(currentFlashcardIndex);
   currentFlashcardIndex = (currentFlashcardIndex + 1) % currentFlashcards.length;
-  updateFlashcard();
+  document.getElementById('fc-inner').classList.remove('flipped'); // reset flip
+  setTimeout(updateFlashcard, 50); // small delay so removal renders first
 }
 
 function prevCard() {
   currentFlashcardIndex = (currentFlashcardIndex - 1 + currentFlashcards.length) % currentFlashcards.length;
-  updateFlashcard();
+  document.getElementById('fc-inner').classList.remove('flipped'); // reset flip
+  setTimeout(updateFlashcard, 50);
 }
 
 function goToCard(i) {
   seenCards.add(currentFlashcardIndex);
   currentFlashcardIndex = i;
-  updateFlashcard();
+  document.getElementById('fc-inner').classList.remove('flipped'); // reset flip
+  setTimeout(updateFlashcard, 50);
 }
 
 // ─── QUIZ ──────────────────────────────────────────────────

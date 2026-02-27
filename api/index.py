@@ -148,7 +148,7 @@ Return ONLY a valid JSON array, no markdown, no extra text:
     "id": 1,
     "question": "Question text?",
     "options": ["A) Option one", "B) Option two", "C) Option three", "D) Option four"],
-    "correct": "A",
+    "correct_answer": "A",
     "explanation": "Why A is correct",
     "topic": "Topic name",
     "difficulty": "easy"
@@ -156,7 +156,7 @@ Return ONLY a valid JSON array, no markdown, no extra text:
 ]
 
 Rules:
-- correct must be exactly one of: A, B, C, or D
+- correct_answer must be exactly one of: A, B, C, or D
 - difficulty must be exactly: easy, medium, or hard
 - Include 3 easy, 3 medium, 2 hard questions
 - Return exactly 8 items"""
