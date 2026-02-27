@@ -609,7 +609,7 @@ def ai_chat():
         app.logger.error("chat error: %s", e)
         return jsonify({"error": f"Chat failed: {str(e)}"}), 500
 
-
+# ─── Required for Vercel ──────────────────────────────────────────────────────
+# Vercel looks for a variable named `app` in api/index.py
 if __name__ == "__main__":
-    debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
-    app.run(debug=debug, port=5000)
+    app.run(debug=False, port=5000)
