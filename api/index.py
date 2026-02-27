@@ -1,46 +1,42 @@
 from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify
+from groq import Groq
 import json
 import os
 import re
-import urllib.request
-
-
-print("HF KEY:", os.environ.get("HUGGINGFACE_API_KEY"))
 
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv()   # Load .env first
+
+# Check API key
+if not os.environ.get("GROQ_API_KEY"):
+    raise Exception("❌ GROQ_API_KEY not found in .env")
+
+# Initialize Groq
+client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 app = Flask(__name__, template_folder="../templates")
 
-ANTHROPIC_API_KEY = os.environ.get("HUGGINGFACE_API_KEY", "")
+
+import urllib.error
 
 
-def call_ai(prompt, max_tokens=500):
-    url = "https://api-inference.huggingface.co/models/google/flan-t5-large"
+def call_ai(prompt, max_tokens=800):
 
-    headers = {
-        "Authorization": f"Bearer {os.environ.get('HUGGINGFACE_API_KEY')}",
-        "Content-Type": "application/json"
-    }
+    if not os.environ.get("GROQ_API_KEY"):
+        raise Exception("GROQ_API_KEY missing in .env")
 
-    data = {
-        "inputs": prompt,
-        "parameters": {
-            "max_new_tokens": max_tokens
-        }
-    }
-
-    req = urllib.request.Request(
-        url,
-        data=json.dumps(data).encode("utf-8"),
-        headers=headers
+    completion = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",   # Fast + free
+        messages=[
+            {"role": "system", "content": "You are an expert academic assistant."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=max_tokens,
+        temperature=0.7
     )
 
-    with urllib.request.urlopen(req) as response:
-        result = json.loads(response.read().decode())
-
-    return result[0]["generated_text"]
-
+    return completion.choices[0].message.content
 
 def extract_json(text):
     match = re.search(r'```json\s*([\s\S]*?)\s*```', text)
