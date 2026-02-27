@@ -1,44 +1,41 @@
 from flask import Flask, render_template, request, jsonify
-from flask import Flask, render_template, request, jsonify
 from groq import Groq
 import json
 import os
 import re
-
 from dotenv import load_dotenv
-load_dotenv()   # Load .env first
 
-# Check API key
+load_dotenv()
+
 if not os.environ.get("GROQ_API_KEY"):
     raise Exception("❌ GROQ_API_KEY not found in .env")
 
-# Initialize Groq
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 app = Flask(__name__, template_folder="../templates")
 
 
-import urllib.error
+def trim_text(text, max_chars=6000):
+    if len(text) <= max_chars:
+        return text
+    return text[:max_chars] + "\n\n[Text truncated for processing]"
 
 
 def call_ai(prompt, max_tokens=800):
-
-    if not os.environ.get("GROQ_API_KEY"):
-        raise Exception("GROQ_API_KEY missing in .env")
-
     completion = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",   # Fast + free
+        model="llama-3.3-70b-versatile",
         messages=[
-            {"role": "system", "content": "You are an expert academic assistant."},
+            {"role": "system", "content": "You are an expert academic assistant. Always respond with valid JSON only — no markdown, no explanation, no extra text."},
             {"role": "user", "content": prompt}
         ],
         max_tokens=max_tokens,
-        temperature=0.7
+        temperature=0.3
     )
-
     return completion.choices[0].message.content
 
+
 def extract_json(text):
+    text = text.strip()
     match = re.search(r'```json\s*([\s\S]*?)\s*```', text)
     if match:
         return json.loads(match.group(1))
@@ -59,13 +56,13 @@ def index():
 @app.route("/api/analyze", methods=["POST"])
 def analyze_notes():
     data = request.json
-    notes = data.get("notes", "").strip()
-    syllabus = data.get("syllabus", "").strip()
+    notes = trim_text(data.get("notes", "").strip())
+    syllabus = trim_text(data.get("syllabus", "").strip(), max_chars=2000)
 
     if not notes:
         return jsonify({"error": "Notes content is required"}), 400
 
-    prompt = f"""You are an expert academic evaluator. Analyze the student notes below against the provided syllabus topics.
+    prompt = f"""Analyze the student notes below against the provided syllabus topics.
 
 STUDENT NOTES:
 {notes}
@@ -73,7 +70,7 @@ STUDENT NOTES:
 SYLLABUS / EXPECTED TOPICS:
 {syllabus if syllabus else "Infer key academic topics from the notes themselves and evaluate coverage depth."}
 
-Return ONLY a valid JSON object with NO markdown formatting, NO extra text:
+Return ONLY a valid JSON object, no markdown, no extra text:
 {{
   "overall_score": 75,
   "completeness": 70,
@@ -101,24 +98,28 @@ Return ONLY a valid JSON object with NO markdown formatting, NO extra text:
 @app.route("/api/flashcards", methods=["POST"])
 def generate_flashcards():
     data = request.json
-    notes = data.get("notes", "").strip()
+    notes = trim_text(data.get("notes", "").strip())
 
     if not notes:
         return jsonify({"error": "Notes content is required"}), 400
 
-    prompt = f"""Generate 10 high-quality academic flashcards from these student notes for active recall study.
+    prompt = f"""Generate exactly 10 academic flashcards from these student notes.
 
 NOTES:
 {notes}
 
-Return ONLY a valid JSON array (NO markdown, NO extra text):
+Return ONLY a valid JSON array, no markdown, no extra text:
 [
   {{"id": 1, "front": "Clear question", "back": "Detailed answer", "topic": "Topic name", "difficulty": "easy"}},
-  {{"id": 2, "front": "...", "back": "...", "topic": "...", "difficulty": "medium"}},
-  {{"id": 3, "front": "...", "back": "...", "topic": "...", "difficulty": "hard"}}
+  {{"id": 2, "front": "question", "back": "answer", "topic": "topic", "difficulty": "medium"}},
+  {{"id": 3, "front": "question", "back": "answer", "topic": "topic", "difficulty": "hard"}}
 ]
 
-Rules: difficulty must be easy/medium/hard. Mix all levels. Test understanding not memorization."""
+Rules:
+- difficulty must be exactly: easy, medium, or hard
+- Generate a mix of all three difficulty levels
+- Test understanding, not just memorization
+- Return exactly 10 items"""
 
     try:
         response = call_ai(prompt, max_tokens=2500)
@@ -131,17 +132,17 @@ Rules: difficulty must be easy/medium/hard. Mix all levels. Test understanding n
 @app.route("/api/quiz", methods=["POST"])
 def generate_quiz():
     data = request.json
-    notes = data.get("notes", "").strip()
+    notes = trim_text(data.get("notes", "").strip())
 
     if not notes:
         return jsonify({"error": "Notes content is required"}), 400
 
-    prompt = f"""Create 8 multiple-choice quiz questions from these student notes.
+    prompt = f"""Create exactly 8 multiple-choice quiz questions from these student notes.
 
 NOTES:
 {notes}
 
-Return ONLY a valid JSON array (NO markdown, NO extra text):
+Return ONLY a valid JSON array, no markdown, no extra text:
 [
   {{
     "id": 1,
@@ -154,7 +155,11 @@ Return ONLY a valid JSON array (NO markdown, NO extra text):
   }}
 ]
 
-Rules: correct must be A/B/C/D. difficulty must be easy/medium/hard. Include 3 easy, 3 medium, 2 hard."""
+Rules:
+- correct must be exactly one of: A, B, C, or D
+- difficulty must be exactly: easy, medium, or hard
+- Include 3 easy, 3 medium, 2 hard questions
+- Return exactly 8 items"""
 
     try:
         response = call_ai(prompt, max_tokens=2500)
@@ -205,19 +210,20 @@ def evaluate_quiz():
     percentage = round((score / total) * 100) if total > 0 else 0
     weak_unique = list(set(weak_topics))
 
-    prompt = f"""Student quiz results: {score}/{total} ({percentage}%)
+    prompt = f"""A student scored {score}/{total} ({percentage}%) on a quiz.
 Weak topics: {', '.join(weak_unique) if weak_unique else 'None'}
 Strong topics: {', '.join(set(correct_topics)) if correct_topics else 'None'}
 
-Return ONLY valid JSON (NO markdown):
+Return ONLY valid JSON, no markdown:
 {{
   "performance_level": "good",
-  "message": "Personalized encouraging message",
+  "message": "Personalized encouraging message based on their score",
   "recommendations": ["Specific recommendation 1", "Specific recommendation 2", "Tip 3"],
-  "study_plan": "Concrete 2-3 sentence study plan",
+  "study_plan": "Concrete 2-3 sentence study plan targeting weak areas",
   "next_steps": ["Step 1", "Step 2"]
 }}
-performance_level: excellent(90-100%), good(70-89%), needs_improvement(50-69%), critical(below 50%)"""
+
+performance_level must be one of: excellent (90-100%), good (70-89%), needs_improvement (50-69%), critical (below 50%)"""
 
     try:
         ai_response = call_ai(prompt, max_tokens=800)
@@ -233,10 +239,15 @@ performance_level: excellent(90-100%), good(70-89%), needs_improvement(50-69%), 
         }
 
     return jsonify({
-        "score": score, "total": total, "percentage": percentage,
-        "results": results, "weak_topics": weak_unique,
-        "strong_topics": list(set(correct_topics)), "ai_feedback": ai_feedback
+        "score": score,
+        "total": total,
+        "percentage": percentage,
+        "results": results,
+        "weak_topics": weak_unique,
+        "strong_topics": list(set(correct_topics)),
+        "ai_feedback": ai_feedback
     })
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
