@@ -16,9 +16,7 @@ MAX_FC_CHARS       = 6_000
 api_key = os.environ.get("GROQ_API_KEY")
 
 client = Groq(api_key=api_key)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-app = Flask(__name__, template_folder=os.path.join(BASE_DIR, "templates"))
-
+app = Flask(__name__)
 
 
 # ─── HELPERS ──────────────────────────────────────────────────────────────────
@@ -609,7 +607,6 @@ def ai_chat():
         app.logger.error("chat error: %s", e)
         return jsonify({"error": f"Chat failed: {str(e)}"}), 500
 
-# ─── Required for Vercel ──────────────────────────────────────────────────────
-# Vercel looks for a variable named `app` in api/index.py
 if __name__ == "__main__":
-    app.run(debug=False, port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)
