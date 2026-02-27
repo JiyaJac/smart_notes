@@ -14,11 +14,11 @@ MAX_SUMMARY_CHARS  = 8_000
 MAX_FC_CHARS       = 6_000
 
 api_key = os.environ.get("GROQ_API_KEY")
-if not api_key:
-    raise EnvironmentError("❌ GROQ_API_KEY not found in .env")
 
 client = Groq(api_key=api_key)
-app = Flask(__name__, template_folder="../templates")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+app = Flask(__name__, template_folder=os.path.join(BASE_DIR, "templates"))
+
 
 
 # ─── HELPERS ──────────────────────────────────────────────────────────────────
