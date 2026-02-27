@@ -22,18 +22,170 @@ app = Flask(__name__, template_folder="../templates")
 
 
 # ─── HELPERS ──────────────────────────────────────────────────────────────────
-def trim_text(text, max_chars=MAX_NOTES_CHARS):
+
+# Keywords that signal academically important content
+# ─── BASE ACADEMIC KEYWORDS ─────────────────────────────────────────────
+BASE_KEYWORDS = [
+    "definition", "define", "defined as", "means", "refers to", "is called",
+    "known as", "also called", "termed", "described as",
+    "important", "key", "critical", "essential", "significant", "notable",
+    "note that", "remember", "must know", "crucial", "fundamental", "core",
+    "primary", "main", "major", "vital",
+    "theorem", "formula", "equation", "law", "principle", "rule", "axiom",
+    "postulate", "theory", "hypothesis", "model", "framework", "concept",
+    "algorithm", "proof", "derivation", "lemma", "corollary",
+    "example", "e.g", "i.e", "for instance", "such as", "namely",
+    "therefore", "thus", "hence", "it follows", "consequently",
+    "as a result", "which means", "this shows", "this proves",
+    "because", "since", "due to", "caused by", "leads to", "results in",
+    "effect", "cause", "impact", "influence", "relationship", "correlation",
+    "depends on", "determined by", "affects",
+    "step", "process", "method", "procedure", "technique", "approach",
+    "function", "purpose", "role", "mechanism", "operation", "workflow",
+    "difference", "compare", "contrast", "similar", "unlike", "whereas",
+    "however", "on the other hand", "advantage", "disadvantage", "benefit",
+    "drawback", "limitation", "versus", "vs",
+    "conclusion", "summary", "in summary", "overall", "in conclusion",
+    "to summarize", "finally", "in brief",
+    "type", "kind", "category", "class", "group", "form", "variant",
+    "classification", "taxonomy", "hierarchy",
+    "approximately", "equals", "percent", "%", "ratio", "rate", "value",
+    "measured", "calculated", "estimated",
+]
+
+_STOP_WORDS = {
+    "a", "an", "the", "and", "or", "but", "in", "on", "at", "to", "for",
+    "of", "with", "by", "from", "is", "are", "was", "were", "be", "been",
+    "being", "have", "has", "had", "do", "does", "did", "will", "would",
+    "could", "should", "may", "might", "shall", "can", "this", "that",
+    "these", "those", "it", "its", "as", "if", "so", "not", "no", "nor",
+    "yet", "both", "either", "neither", "each", "few", "more", "most",
+    "other", "some", "such", "than", "then", "when", "where", "which",
+    "who", "whom", "how", "all", "any", "between", "into", "through",
+    "during", "before", "after", "above", "below", "up", "down", "out",
+    "about", "per", "their", "they", "we", "you", "he", "she", "his",
+    "her", "our", "your", "my", "me", "him", "us", "them",
+}
+
+
+def extract_syllabus_keywords(syllabus):
+    """Extract meaningful topic words and phrases from syllabus text."""
+    if not syllabus or not syllabus.strip():
+        return []
+    keywords = set()
+    for line in syllabus.splitlines():
+        clean = re.sub(r'^\s*[\-\*\•\d\.\)]+\s*', '', line).strip()
+        if not clean:
+            continue
+        tokens = re.findall(r"[a-zA-Z']+", clean.lower())
+        for tok in tokens:
+            if len(tok) >= 4 and tok not in _STOP_WORDS:
+                keywords.add(tok)
+        for n in (2, 3):
+            for i in range(len(tokens) - n + 1):
+                phrase = " ".join(tokens[i:i + n])
+                if any(t not in _STOP_WORDS and len(t) >= 4 for t in tokens[i:i + n]):
+                    keywords.add(phrase)
+    return list(keywords)
+
+
+def smart_trim(text, max_chars, syllabus=''):
+    """
+    Hybrid broad + priority trimming.
+
+    Pass 1 - EVEN SPREAD (60% of budget):
+        Divides notes into ~20 equal chunks and picks the best-scoring
+        line from each. Guarantees content from every section of the
+        notes reaches the AI, not just the opening pages.
+
+    Pass 2 - PRIORITY FILL (remaining 40%):
+        From lines not yet selected, picks the highest-scoring ones
+        to fill the rest of the budget. Rewards definitions,
+        syllabus-matched content, and key academic sentences.
+
+    Pass 3 - RESTORE ORDER:
+        Re-sorts all selected lines by original position so the AI
+        reads them in natural document order.
+
+    Scoring: +5 per syllabus keyword, +2 per base keyword, +1 length bonus.
+    """
+    text = text.strip()
     if len(text) <= max_chars:
         return text
-    return text[:max_chars] + "\n\n[Text truncated for processing]"
+
+    syllabus_keywords = extract_syllabus_keywords(syllabus)
+    raw_lines = re.split(r'(?<=[.!?])\s+|\n+', text)
+    lines = [l.strip() for l in raw_lines if l.strip()]
+
+    if not lines:
+        return text[:max_chars]
+
+    def score_line(line):
+        lower = line.lower()
+        syllabus_hits = sum(1 for kw in syllabus_keywords if kw in lower)
+        base_hits     = sum(1 for kw in BASE_KEYWORDS if kw in lower)
+        length_bonus  = min(len(line), 300) / 300
+        return syllabus_hits * 5 + base_hits * 2 + length_bonus
+
+    scored_lines = [(i, line, score_line(line)) for i, line in enumerate(lines)]
+
+    spread_budget   = int(max_chars * 0.60)
+    priority_budget = max_chars - spread_budget
+
+    # Pass 1: even spread across chunks
+    chunk_size = max(20, len(lines) // 20)
+    chunks = [scored_lines[i:i + chunk_size] for i in range(0, len(scored_lines), chunk_size)]
+
+    selected_indices = set()
+    selected = []
+    total_chars = 0
+
+    for chunk in chunks:
+        if not chunk or total_chars >= spread_budget:
+            break
+        best = max(chunk, key=lambda x: x[2])
+        i, line, score = best
+        needed = len(line) + 1
+        if total_chars + needed <= spread_budget:
+            selected.append((i, line))
+            selected_indices.add(i)
+            total_chars += needed
+
+    # Pass 2: priority fill with remaining budget
+    remaining_lines = [(i, line, score) for i, line, score in scored_lines
+                       if i not in selected_indices]
+    remaining_lines.sort(key=lambda x: x[2], reverse=True)
+
+    remaining_budget = max_chars - total_chars
+    for i, line, score in remaining_lines:
+        if remaining_budget <= 0:
+            break
+        needed = len(line) + 1
+        if needed <= remaining_budget:
+            selected.append((i, line))
+            remaining_budget -= needed
+        elif remaining_budget > 80 and score > 3:
+            selected.append((i, line[:remaining_budget].rstrip()))
+            remaining_budget = 0
+
+    # Pass 3: restore document order
+    selected.sort(key=lambda x: x[0])
+    return '\n'.join(line for _, line in selected)
 
 
 def get_notes_from_request():
-    """Safely parse JSON body and return trimmed notes string."""
+    """
+    Safely parse JSON body.
+    Passes the syllabus into smart_trim so note scoring is
+    guided by the student's actual course topics.
+    """
     data = request.get_json(silent=True) or {}
-    return data, trim_text(data.get("notes", "").strip())
+    syllabus = data.get("syllabus", "").strip()
+    notes = smart_trim(data.get("notes", "").strip(), MAX_NOTES_CHARS, syllabus=syllabus)
+    return data, notes
 
 
+# ─── AI CALL ──────────────────────────────────────────────────────────────────
 def call_ai(prompt, max_tokens=800, temperature=0.3):
     """Call Groq API with a timeout. Raises on failure."""
     completion = client.chat.completions.create(
@@ -305,7 +457,7 @@ def analyze_notes():
     if not notes:
         return jsonify({"error": "Notes content is required"}), 400
 
-    syllabus = trim_text(data.get("syllabus", "").strip(), max_chars=MAX_SYLLABUS_CHARS)
+    syllabus = smart_trim(data.get("syllabus", "").strip(), MAX_SYLLABUS_CHARS)
     prompt = build_analyze_prompt(notes, syllabus)
 
     try:
@@ -323,7 +475,7 @@ def generate_flashcards():
     if not notes:
         return jsonify({"error": "Notes content is required"}), 400
 
-    notes = trim_text(notes, max_chars=MAX_FC_CHARS)
+    notes = smart_trim(notes, MAX_FC_CHARS)
     prompt = build_flashcard_prompt(notes)
 
     try:
@@ -431,7 +583,7 @@ def summarize_notes():
         return jsonify({"error": "Notes content is required"}), 400
 
     style = data.get("style", "all")
-    notes_excerpt = notes[:MAX_SUMMARY_CHARS]
+    notes_excerpt = smart_trim(notes, MAX_SUMMARY_CHARS)
     word_count = len(notes.split())
     prompt = build_summary_prompt(style, notes_excerpt, word_count)
 
