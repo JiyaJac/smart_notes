@@ -37,7 +37,6 @@
     overflow-x: hidden;
   }
 
-  /* ─── ANIMATED GRID BACKGROUND ─── */
   body::before {
     content: '';
     position: fixed;
@@ -90,8 +89,8 @@
     gap: 10px;
   }
 
-  .logo-dot { 
-    width: 10px; height: 10px; 
+  .logo-dot {
+    width: 10px; height: 10px;
     background: var(--cyan);
     border-radius: 50%;
     box-shadow: 0 0 10px var(--cyan), 0 0 20px rgba(34,211,238,0.4);
@@ -114,7 +113,7 @@
     background: transparent;
     border: none;
     color: var(--muted);
-    padding: 0 1.25rem;
+    padding: 0 1.1rem;
     height: 64px;
     cursor: pointer;
     transition: all 0.2s;
@@ -167,6 +166,13 @@
 
   .hero h1 span {
     background: linear-gradient(135deg, var(--primary), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero h1 span.cyan-grad {
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -280,6 +286,17 @@
     box-shadow: 0 8px 25px rgba(59,130,246,0.4), 0 0 30px rgba(139,92,246,0.2);
   }
 
+  .btn-cyan {
+    background: linear-gradient(135deg, var(--cyan), var(--primary));
+    color: var(--bg);
+    box-shadow: 0 4px 15px rgba(34,211,238,0.3);
+  }
+
+  .btn-cyan:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(34,211,238,0.45), 0 0 30px rgba(59,130,246,0.2);
+  }
+
   .btn-secondary {
     background: transparent;
     color: var(--text);
@@ -303,6 +320,37 @@
     gap: 1rem;
     align-items: center;
     flex-wrap: wrap;
+  }
+
+  /* ─── STYLE SELECTOR ─── */
+  .style-selector {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .style-chip {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .style-chip:hover { border-color: var(--cyan); color: var(--cyan); }
+  .style-chip.active {
+    background: rgba(34,211,238,0.12);
+    border-color: rgba(34,211,238,0.5);
+    color: var(--cyan);
+    box-shadow: 0 0 12px rgba(34,211,238,0.15);
   }
 
   /* ─── LOADING ─── */
@@ -924,6 +972,386 @@
   .topic-chip.weak { background: rgba(248,113,113,0.12); color: var(--red); border: 1px solid rgba(248,113,113,0.25); }
   .topic-chip.strong { background: rgba(16,185,129,0.12); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
 
+  /* ─── SUMMARY STYLES ─── */
+  .summary-header-card {
+    background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(139,92,246,0.08));
+    border: 1px solid rgba(59,130,246,0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .summary-header-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  }
+
+  .summary-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .summary-meta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .summary-meta-chip {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: rgba(59,130,246,0.15);
+    border: 1px solid rgba(59,130,246,0.3);
+    color: var(--primary);
+  }
+
+  .summary-meta-chip.words {
+    background: rgba(139,92,246,0.12);
+    border-color: rgba(139,92,246,0.3);
+    color: var(--violet);
+  }
+
+  .brief-box {
+    background: linear-gradient(135deg, rgba(34,211,238,0.06), rgba(59,130,246,0.04));
+    border: 1px solid rgba(34,211,238,0.2);
+    border-left: 3px solid var(--cyan);
+    border-radius: 10px;
+    padding: 1.5rem;
+    font-size: 1rem;
+    line-height: 1.75;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 2rem;
+  }
+
+  .detailed-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    font-size: 0.92rem;
+    line-height: 1.8;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 2rem;
+  }
+
+  .bullet-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .bullet-list li {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.9rem 1.25rem;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--text);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    transition: border-color 0.2s;
+  }
+
+  .bullet-list li:hover { border-color: rgba(139,92,246,0.3); }
+
+  .bullet-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: rgba(139,92,246,0.15);
+    border: 1px solid rgba(139,92,246,0.35);
+    color: var(--violet);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .definitions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .def-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    transition: border-color 0.2s;
+  }
+
+  .def-card:hover { border-color: rgba(34,211,238,0.3); }
+
+  .def-term {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--cyan);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.02em;
+  }
+
+  .def-text {
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  /* Mindmap */
+  .mindmap-container {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+  }
+
+  .mindmap-root {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--text);
+    background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(139,92,246,0.12));
+    border: 2px solid rgba(59,130,246,0.5);
+    border-radius: 8px;
+    padding: 0.6rem 1.4rem;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0 20px rgba(59,130,246,0.2), 0 0 40px rgba(139,92,246,0.08);
+  }
+
+  .mindmap-branches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    padding-left: 1rem;
+    border-left: 2px solid rgba(59,130,246,0.2);
+  }
+
+  .mindmap-branch {
+    background: rgba(59,130,246,0.05);
+    border: 1px solid rgba(59,130,246,0.18);
+    border-radius: 8px;
+    padding: 0.9rem 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .mindmap-branch:hover {
+    border-color: rgba(34,211,238,0.3);
+    box-shadow: 0 0 12px rgba(34,211,238,0.06);
+  }
+
+  .branch-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.65rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .branch-title::before {
+    content: '◆';
+    font-size: 0.5rem;
+    color: var(--cyan);
+  }
+
+  .branch-subtopics {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .branch-subtopics li {
+    font-size: 0.8rem;
+    color: var(--muted);
+    padding-left: 0.85rem;
+    position: relative;
+    line-height: 1.4;
+  }
+
+  .branch-subtopics li::before {
+    content: '–';
+    position: absolute;
+    left: 0;
+    color: rgba(59,130,246,0.4);
+  }
+
+  .connections-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+  }
+
+  .connection-item {
+    background: rgba(34,211,238,0.04);
+    border: 1px solid rgba(34,211,238,0.15);
+    border-radius: 8px;
+    padding: 0.85rem 1.1rem;
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .connection-item::before {
+    content: '↔';
+    color: var(--cyan);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .gaps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+  }
+
+  .gap-item {
+    background: rgba(248,113,113,0.05);
+    border: 1px solid rgba(248,113,113,0.15);
+    border-radius: 8px;
+    padding: 0.85rem 1.1rem;
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .gap-item::before {
+    content: '⚠';
+    color: var(--red);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .tips-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .tip-card {
+    background: rgba(59,130,246,0.06);
+    border: 1px solid rgba(59,130,246,0.18);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.5;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    transition: border-color 0.2s;
+  }
+
+  .tip-card:hover { border-color: rgba(34,211,238,0.3); }
+
+  .tip-card::before {
+    content: '💡';
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .dates-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .date-pill {
+    background: rgba(139,92,246,0.1);
+    border: 1px solid rgba(139,92,246,0.25);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .date-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--violet);
+  }
+
+  .date-ctx {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  /* View toggle tabs */
+  .view-tabs {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    width: fit-content;
+  }
+
+  .view-tab {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    padding: 0.6rem 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-right: 1px solid var(--border);
+  }
+
+  .view-tab:last-child { border-right: none; }
+  .view-tab:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .view-tab.active { background: rgba(34,211,238,0.1); color: var(--cyan); }
+
   /* ─── ERROR ─── */
   .error-box {
     background: rgba(248,113,113,0.08);
@@ -967,7 +1395,10 @@
     .score-big { grid-column: span 2; }
     .insights-grid { grid-template-columns: 1fr; }
     .reco-cards { grid-template-columns: 1fr; }
-    nav button { padding: 0 0.75rem; font-size: 0.7rem; }
+    nav button { padding: 0 0.6rem; font-size: 0.68rem; }
+    .mindmap-branches { grid-template-columns: 1fr; }
+    .definitions-grid { grid-template-columns: 1fr; }
+    .tips-list { grid-template-columns: 1fr; }
   }
 
   /* ─── FILE UPLOAD ─── */
@@ -1023,7 +1454,6 @@
   }
   .upload-area { display: none; }
   .upload-area.show { display: block; }
-
 </style>
 </head>
 <body>
@@ -1034,9 +1464,10 @@
     SmartNotes
   </div>
   <nav>
-    <button class="active" onclick="switchTab('analyze')">Analyze</button>
-    <button onclick="switchTab('flashcards')">Flashcards</button>
-    <button onclick="switchTab('quiz')">Quiz Zone</button>
+    <button class="active" onclick="switchTab('analyze', this)">Analyze</button>
+    <button onclick="switchTab('flashcards', this)">Flashcards</button>
+    <button onclick="switchTab('quiz', this)">Quiz Zone</button>
+    <button onclick="switchTab('summary', this)">✦ Summary</button>
   </nav>
 </header>
 
@@ -1164,6 +1595,54 @@
   </div>
 </div>
 
+<!-- ═══════════════════════ SUMMARY TAB ═══════════════════════ -->
+<div id="tab-summary" class="tab-section">
+  <div class="hero">
+    <div class="hero-tag">✦ Smart Summarizer</div>
+    <h1>Your notes,<br><span class="cyan-grad">crystal clear</span></h1>
+    <p>AI distills your notes into a brief TL;DR, detailed breakdown, bullet points, and a visual mind map — so you can revise faster and smarter.</p>
+  </div>
+  <div class="container">
+    <div class="input-group" style="margin-bottom:1.25rem">
+      <div class="input-group-header">
+        <label>📄 Your Study Notes <span class="badge">Required</span></label>
+        <button class="upload-toggle" id="sum-notes-upload-toggle" onclick="toggleUpload('sum-notes')">📎 Upload File</button>
+      </div>
+      <div class="upload-area" id="sum-notes-upload-area">
+        <div class="upload-zone" id="sum-notes-drop-zone" ondragover="handleDragOver(event,'sum-notes')" ondragleave="handleDragLeave('sum-notes')" ondrop="handleDrop(event,'sum-notes')">
+          <input type="file" id="sum-notes-file-input" accept=".txt,.md,.pdf,.docx,.doc,.rtf" onchange="handleFileSelect(event,'sum-notes')">
+          <span class="upload-icon">📂</span>
+          <p><strong>Click to browse</strong> or drag & drop your file here</p>
+          <p>Supports .txt, .md, .pdf, .docx, .rtf</p>
+          <div id="sum-notes-file-badge" style="display:none"></div>
+        </div>
+      </div>
+      <textarea id="sum-notes-input" placeholder="Paste your study notes here to generate a comprehensive summary..." rows="8"></textarea>
+    </div>
+
+    <div style="margin-bottom:1.5rem">
+      <label style="margin-bottom:0.6rem;display:block">📊 Summary Style</label>
+      <div class="style-selector">
+        <button class="style-chip active" data-style="all" onclick="selectStyle(this)">✦ Full Report</button>
+        <button class="style-chip" data-style="brief" onclick="selectStyle(this)">⚡ Brief TL;DR</button>
+        <button class="style-chip" data-style="detailed" onclick="selectStyle(this)">📖 Detailed</button>
+        <button class="style-chip" data-style="bullet" onclick="selectStyle(this)">• Bullet Points</button>
+        <button class="style-chip" data-style="mindmap" onclick="selectStyle(this)">🗺 Mind Map</button>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-cyan" id="sum-btn" onclick="generateSummary()">
+        <div class="spinner"></div>
+        <span class="btn-text">✦ Generate Summary</span>
+      </button>
+      <button class="btn btn-secondary" onclick="clearSummary()">Clear</button>
+    </div>
+    <div class="error-box" id="sum-error"></div>
+    <div class="results-area" id="sum-results"></div>
+  </div>
+</div>
+
 <script>
 // ─── STATE ───────────────────────────────────────────────
 let currentFlashcards = [];
@@ -1172,13 +1651,14 @@ let seenCards = new Set();
 let currentQuiz = [];
 let quizAnswers = {};
 let quizSubmitted = false;
+let selectedSummaryStyle = 'all';
 
 // ─── TAB SWITCHING ───────────────────────────────────────
-function switchTab(tab) {
+function switchTab(tab, btn) {
   document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
-  event.target.classList.add('active');
+  if (btn) btn.classList.add('active');
 }
 
 // ─── LOADING STATE ───────────────────────────────────────
@@ -1200,13 +1680,10 @@ function showError(elId, msg) {
 async function analyzeNotes() {
   const notes = document.getElementById('notes-input').value.trim();
   const syllabus = document.getElementById('syllabus-input').value.trim();
-
   if (!notes) { showError('analyze-error', 'Please paste your study notes first.'); return; }
-
   setLoading('analyze-btn', true);
   document.getElementById('analyze-results').innerHTML = '';
   document.getElementById('analyze-error').classList.remove('show');
-
   try {
     const res = await fetch('/api/analyze', {
       method: 'POST', headers: {'Content-Type': 'application/json'},
@@ -1231,7 +1708,6 @@ function clearAnalysis() {
 function renderAnalysis(d) {
   const statusIcon = { complete: '✓', partial: '◑', missing: '✗' };
   const statusClass = { complete: 'complete', partial: 'partial', missing: 'missing' };
-
   const topicsHTML = (d.topics_covered || []).map(t => `
     <div class="topic-card">
       <div class="topic-icon ${statusClass[t.status]}">${statusIcon[t.status]}</div>
@@ -1241,9 +1717,7 @@ function renderAnalysis(d) {
       </div>
     </div>
   `).join('');
-
   const listItems = arr => (arr || []).map(s => `<li>${s}</li>`).join('');
-
   document.getElementById('analyze-results').innerHTML = `
     <div class="section-heading">Score Overview</div>
     <div class="score-grid">
@@ -1267,26 +1741,14 @@ function renderAnalysis(d) {
         <div class="progress-bar"><div class="progress-fill" style="width:${d.structure}%;background:var(--green)"></div></div>
       </div>
     </div>
-
     <div class="section-heading">Topic Coverage</div>
     <div class="topics-grid">${topicsHTML}</div>
-
     <div class="section-heading">Feedback</div>
     <div class="insights-grid">
-      <div class="insight-panel strengths">
-        <h4>✓ Strengths</h4>
-        <ul>${listItems(d.strengths)}</ul>
-      </div>
-      <div class="insight-panel weaknesses">
-        <h4>✗ Weaknesses</h4>
-        <ul>${listItems(d.weaknesses)}</ul>
-      </div>
-      <div class="insight-panel suggestions">
-        <h4>→ Improvements</h4>
-        <ul>${listItems(d.improvement_suggestions)}</ul>
-      </div>
+      <div class="insight-panel strengths"><h4>✓ Strengths</h4><ul>${listItems(d.strengths)}</ul></div>
+      <div class="insight-panel weaknesses"><h4>✗ Weaknesses</h4><ul>${listItems(d.weaknesses)}</ul></div>
+      <div class="insight-panel suggestions"><h4>→ Improvements</h4><ul>${listItems(d.improvement_suggestions)}</ul></div>
     </div>
-
     <div class="section-heading">Summary</div>
     <div class="summary-box">${d.summary}</div>
   `;
@@ -1296,11 +1758,9 @@ function renderAnalysis(d) {
 async function generateFlashcards() {
   const notes = document.getElementById('fc-notes-input').value.trim();
   if (!notes) { showError('fc-error', 'Please paste your study notes first.'); return; }
-
   setLoading('fc-btn', true);
   document.getElementById('fc-results').innerHTML = '';
   document.getElementById('fc-error').classList.remove('show');
-
   try {
     const res = await fetch('/api/flashcards', {
       method: 'POST', headers: {'Content-Type': 'application/json'},
@@ -1322,7 +1782,6 @@ async function generateFlashcards() {
 
 function renderFlashcardUI() {
   if (!currentFlashcards.length) return;
-
   document.getElementById('fc-results').innerHTML = `
     <div class="section-heading">Your Flashcards</div>
     <div class="flashcard-controls">
@@ -1334,16 +1793,12 @@ function renderFlashcardUI() {
         <div class="fc-face fc-front">
           <div class="fc-label">Question</div>
           <div class="fc-text" id="fc-front-text"></div>
-          <div class="fc-meta">
-            <span class="diff-badge" id="fc-diff-badge"></span>
-          </div>
+          <div class="fc-meta"><span class="diff-badge" id="fc-diff-badge"></span></div>
         </div>
         <div class="fc-face fc-back">
           <div class="fc-label">Answer</div>
           <div class="fc-text" id="fc-back-text"></div>
-          <div class="fc-meta">
-            <span style="font-size:0.7rem;color:var(--muted)" id="fc-topic-label"></span>
-          </div>
+          <div class="fc-meta"><span style="font-size:0.7rem;color:var(--muted)" id="fc-topic-label"></span></div>
         </div>
       </div>
     </div>
@@ -1354,27 +1809,22 @@ function renderFlashcardUI() {
       <button class="btn btn-primary" onclick="nextCard()" style="padding:0.6rem 1.25rem">Next →</button>
     </div>
   `;
-
   updateFlashcard();
 }
 
 function updateFlashcard() {
   const card = currentFlashcards[currentFlashcardIndex];
   if (!card) return;
-
   document.getElementById('fc-inner').classList.remove('flipped');
   document.getElementById('fc-front-text').textContent = card.front;
   document.getElementById('fc-back-text').textContent = card.back;
   document.getElementById('fc-diff-badge').textContent = card.difficulty || 'medium';
   document.getElementById('fc-diff-badge').className = `diff-badge ${card.difficulty || 'medium'}`;
   document.getElementById('fc-topic-label').textContent = card.topic || '';
-
   const total = currentFlashcards.length;
   const idx = currentFlashcardIndex;
   document.getElementById('fc-counter').textContent = `${idx+1} / ${total}`;
   document.getElementById('fc-progress').style.width = `${((idx+1)/total)*100}%`;
-
-  // dots
   let dots = '';
   for (let i = 0; i < total; i++) {
     const cls = i === idx ? 'active' : seenCards.has(i) ? 'seen' : '';
@@ -1388,7 +1838,6 @@ function flipCard() {
   if (!inner) return;
   const isFlipped = inner.classList.contains('flipped');
   seenCards.add(currentFlashcardIndex);
-  // Update dots/counter WITHOUT touching the card element
   const total = currentFlashcards.length;
   const idx = currentFlashcardIndex;
   const counter = document.getElementById('fc-counter');
@@ -1400,27 +1849,26 @@ function flipCard() {
   }
   const dotsEl = document.getElementById('fc-dots');
   if (dotsEl) dotsEl.innerHTML = dots;
-  // Now toggle flip AFTER updating everything else
   inner.classList.toggle('flipped', !isFlipped);
 }
 
 function nextCard() {
   seenCards.add(currentFlashcardIndex);
   currentFlashcardIndex = (currentFlashcardIndex + 1) % currentFlashcards.length;
-  document.getElementById('fc-inner').classList.remove('flipped'); // reset flip
-  setTimeout(updateFlashcard, 50); // small delay so removal renders first
+  document.getElementById('fc-inner').classList.remove('flipped');
+  setTimeout(updateFlashcard, 50);
 }
 
 function prevCard() {
   currentFlashcardIndex = (currentFlashcardIndex - 1 + currentFlashcards.length) % currentFlashcards.length;
-  document.getElementById('fc-inner').classList.remove('flipped'); // reset flip
+  document.getElementById('fc-inner').classList.remove('flipped');
   setTimeout(updateFlashcard, 50);
 }
 
 function goToCard(i) {
   seenCards.add(currentFlashcardIndex);
   currentFlashcardIndex = i;
-  document.getElementById('fc-inner').classList.remove('flipped'); // reset flip
+  document.getElementById('fc-inner').classList.remove('flipped');
   setTimeout(updateFlashcard, 50);
 }
 
@@ -1428,11 +1876,9 @@ function goToCard(i) {
 async function generateQuiz() {
   const notes = document.getElementById('quiz-notes-input').value.trim();
   if (!notes) { showError('quiz-error', 'Please paste your study notes first.'); return; }
-
   setLoading('quiz-gen-btn', true);
   document.getElementById('quiz-area').innerHTML = '';
   document.getElementById('quiz-error').classList.remove('show');
-
   try {
     const res = await fetch('/api/quiz', {
       method: 'POST', headers: {'Content-Type': 'application/json'},
@@ -1451,20 +1897,29 @@ async function generateQuiz() {
     setLoading('quiz-gen-btn', false);
   }
 }
+
 function renderQuiz() {
   let html = '<div class="section-heading">Your Quiz</div>';
-
   currentQuiz.forEach((q, i) => {
-    const qId = String(q.id);  // Convert to string for consistent IDs
+    const qId = String(q.id);
     const diffClass = q.difficulty || 'medium';
     const letters = ['A','B','C','D'];
-    const optionsHTML = (q.options || []).map((opt, j) => `
-      <button class="q-option" onclick="selectAnswer(${qId}, '${letters[j]}')" id="opt-${qId}-${letters[j]}">
-        <span class="q-option-letter">${letters[j]}</span>
-        <span>${opt}</span>
-      </button>
-    `).join('');
-
+    let optionsHTML = '';
+    if (q.options && typeof q.options === 'object' && !Array.isArray(q.options)) {
+      optionsHTML = letters.map(l => `
+        <button class="q-option" onclick="selectAnswer(${qId}, '${l}')" id="opt-${qId}-${l}">
+          <span class="q-option-letter">${l}</span>
+          <span>${q.options[l] || ''}</span>
+        </button>
+      `).join('');
+    } else {
+      optionsHTML = (q.options || []).map((opt, j) => `
+        <button class="q-option" onclick="selectAnswer(${qId}, '${letters[j]}')" id="opt-${qId}-${letters[j]}">
+          <span class="q-option-letter">${letters[j]}</span>
+          <span>${opt}</span>
+        </button>
+      `).join('');
+    }
     html += `
       <div class="quiz-question-card" id="qcard-${qId}">
         <div class="q-header">
@@ -1480,7 +1935,6 @@ function renderQuiz() {
       </div>
     `;
   });
-
   html += `
     <div class="btn-row" style="margin-top:1.5rem">
       <button class="btn btn-primary" id="submit-quiz-btn" onclick="submitQuiz()">
@@ -1491,23 +1945,18 @@ function renderQuiz() {
     </div>
     <div id="quiz-results"></div>
   `;
-
   document.getElementById('quiz-area').innerHTML = html;
 }
 
 function selectAnswer(questionId, letter) {
   if (quizSubmitted) return;
   quizAnswers[questionId] = letter;
-
-  // update UI
   ['A','B','C','D'].forEach(l => {
     const el = document.getElementById(`opt-${questionId}-${l}`);
     if (el) el.classList.remove('selected');
   });
   const selected = document.getElementById(`opt-${questionId}-${letter}`);
   if (selected) selected.classList.add('selected');
-
-  // update counter
   const count = Object.keys(quizAnswers).length;
   const counter = document.getElementById('answer-count');
   if (counter) counter.textContent = `${count} / ${currentQuiz.length} answered`;
@@ -1518,12 +1967,10 @@ async function submitQuiz() {
     const unanswered = currentQuiz.length - Object.keys(quizAnswers).length;
     if (!confirm(`You have ${unanswered} unanswered question(s). Submit anyway?`)) return;
   }
-
   quizSubmitted = true;
   const btn = document.getElementById('submit-quiz-btn');
   btn.disabled = true;
   btn.classList.add('loading');
-
   try {
     const res = await fetch('/api/evaluate-quiz', {
       method: 'POST', headers: {'Content-Type': 'application/json'},
@@ -1548,24 +1995,13 @@ function revealAnswers(results) {
       if (!el) return;
       el.disabled = true;
       el.classList.remove('selected');
-      if (l === r.correct_answer) {
-        el.classList.add('reveal-correct');
-      }
+      if (l === r.correct_answer) el.classList.add('reveal-correct');
     });
-
-    // Mark user's wrong answer - FIX: ensure proper type comparison
     const userAnswer = r.user_answer ? r.user_answer.toString().toUpperCase() : '';
-    const correctAnswer = r.correct_answer ? r.correct_answer.toString().toUpperCase() : '';
-    
     if (!r.is_correct && userAnswer) {
       const wrongEl = document.getElementById(`opt-${r.id}-${userAnswer}`);
-      if (wrongEl) {
-        wrongEl.classList.remove('reveal-correct');
-        wrongEl.classList.add('incorrect');
-      }
+      if (wrongEl) { wrongEl.classList.remove('reveal-correct'); wrongEl.classList.add('incorrect'); }
     }
-
-    // Show explanation
     const expEl = document.getElementById(`exp-${r.id}`);
     if (expEl) expEl.classList.add('show');
   });
@@ -1574,20 +2010,16 @@ function revealAnswers(results) {
 function renderQuizResults(data) {
   const fb = data.ai_feedback || {};
   const perfClass = fb.performance_level || 'good';
-
   const perfLabels = {
     excellent: '🏆 Excellent Performance',
     good: '👍 Good Performance',
     needs_improvement: '📚 Needs Improvement',
     critical: '⚠ Needs Urgent Attention'
   };
-
   const weakChips = (data.weak_topics || []).map(t => `<span class="topic-chip weak">${t}</span>`).join('');
   const strongChips = (data.strong_topics || []).map(t => `<span class="topic-chip strong">${t}</span>`).join('');
-
   const recoHTML = (fb.recommendations || []).map(r => `<li>${r}</li>`).join('');
   const stepsHTML = (fb.next_steps || []).map(s => `<li>${s}</li>`).join('');
-
   document.getElementById('quiz-results').innerHTML = `
     <div style="margin-top:2.5rem">
       <div class="section-heading">Your Results</div>
@@ -1597,34 +2029,27 @@ function renderQuizResults(data) {
         <div class="result-label">${data.score} out of ${data.total} correct</div>
         <div class="result-message">${fb.message || ''}</div>
       </div>
-
       ${weakChips || strongChips ? `
       <div class="section-heading">Topic Breakdown</div>
       <div style="margin-bottom:1.5rem">
         ${weakChips ? `<div style="margin-bottom:0.75rem"><strong style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--red)">Needs Review: </strong>${weakChips}</div>` : ''}
         ${strongChips ? `<div><strong style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--green)">Strong Topics: </strong>${strongChips}</div>` : ''}
       </div>` : ''}
-
       <div class="section-heading">Personalized Recommendations</div>
       <div class="reco-cards">
-        <div class="reco-card">
-          <h4>→ Study Recommendations</h4>
-          <ul>${recoHTML}</ul>
-        </div>
+        <div class="reco-card"><h4>→ Study Recommendations</h4><ul>${recoHTML}</ul></div>
         <div class="reco-card">
           <h4>✓ Next Steps</h4>
           <ul>${stepsHTML}</ul>
           ${fb.study_plan ? `<p style="margin-top:0.85rem;font-size:0.83rem;line-height:1.5;color:var(--muted);border-top:1px solid var(--border);padding-top:0.85rem">${fb.study_plan}</p>` : ''}
         </div>
       </div>
-
       <div class="btn-row">
         <button class="btn btn-primary" onclick="generateQuiz()">↺ Retake Quiz</button>
         <button class="btn btn-secondary" onclick="switchTabDirect('flashcards')">⚡ Review Flashcards</button>
       </div>
     </div>
   `;
-
   document.getElementById('quiz-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -1632,10 +2057,12 @@ function switchTabDirect(tab) {
   document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
-  document.querySelectorAll('nav button')[tab === 'analyze' ? 0 : tab === 'flashcards' ? 1 : 2].classList.add('active');
+  const tabMap = { analyze: 0, flashcards: 1, quiz: 2, summary: 3 };
+  const btns = document.querySelectorAll('nav button');
+  if (btns[tabMap[tab]]) btns[tabMap[tab]].classList.add('active');
 }
 
-// Keyboard navigation for flashcards
+// ─── KEYBOARD NAVIGATION ─────────────────────────────────
 document.addEventListener('keydown', e => {
   if (!document.getElementById('tab-flashcards').classList.contains('active')) return;
   if (!currentFlashcards.length) return;
@@ -1643,6 +2070,226 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft') prevCard();
   if (e.key === ' ') { e.preventDefault(); flipCard(); }
 });
+
+// ─── SUMMARY ──────────────────────────────────────────────
+
+function selectStyle(btn) {
+  document.querySelectorAll('.style-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  selectedSummaryStyle = btn.dataset.style;
+}
+
+async function generateSummary() {
+  const notes = document.getElementById('sum-notes-input').value.trim();
+  if (!notes) { showError('sum-error', 'Please paste your study notes first.'); return; }
+
+  setLoading('sum-btn', true);
+  document.getElementById('sum-results').innerHTML = '';
+  document.getElementById('sum-error').classList.remove('show');
+
+  try {
+    const res = await fetch('/api/summarize', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ notes, style: selectedSummaryStyle })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    renderSummary(data);
+  } catch(e) {
+    showError('sum-error', e.message || 'Summary generation failed. Please try again.');
+  } finally {
+    setLoading('sum-btn', false);
+  }
+}
+
+function clearSummary() {
+  document.getElementById('sum-notes-input').value = '';
+  document.getElementById('sum-results').innerHTML = '';
+}
+
+function renderSummary(d) {
+  const style = d.style || 'all';
+  let html = '';
+
+  // ── Header card ──
+  html += `
+    <div class="summary-header-card">
+      <div class="summary-title">${d.title || 'Summary'}</div>
+      <div class="summary-meta">
+        ${d.subject_area ? `<span class="summary-meta-chip">${d.subject_area}</span>` : ''}
+        ${d.word_count_estimate ? `<span class="summary-meta-chip words">~${d.word_count_estimate} words</span>` : ''}
+        <span class="summary-meta-chip" style="background:rgba(34,211,238,0.1);border-color:rgba(34,211,238,0.3);color:var(--cyan)">${style === 'all' ? 'Full Report' : style.charAt(0).toUpperCase() + style.slice(1)}</span>
+      </div>
+    </div>
+  `;
+
+  // ── View Tabs (only for 'all' style) ──
+  if (style === 'all') {
+    html += `
+      <div class="view-tabs">
+        <button class="view-tab active" onclick="showSumView('brief', this)">⚡ Brief</button>
+        <button class="view-tab" onclick="showSumView('detailed', this)">📖 Detailed</button>
+        <button class="view-tab" onclick="showSumView('bullets', this)">• Bullets</button>
+        <button class="view-tab" onclick="showSumView('mindmap', this)">🗺 Mind Map</button>
+        <button class="view-tab" onclick="showSumView('extras', this)">✦ Extras</button>
+      </div>
+    `;
+  }
+
+  // ── Brief Summary ──
+  if (d.brief_summary && (style === 'all' || style === 'brief')) {
+    html += `
+      <div id="sum-view-brief" class="sum-view ${style !== 'all' ? '' : ''}">
+        <div class="section-heading">TL;DR — The Short Version</div>
+        <div class="brief-box">${d.brief_summary}</div>
+      </div>
+    `;
+  }
+
+  // ── Detailed Summary ──
+  if (d.detailed_summary && (style === 'all' || style === 'detailed')) {
+    html += `
+      <div id="sum-view-detailed" class="sum-view" ${style === 'all' ? 'style="display:none"' : ''}>
+        <div class="section-heading">Detailed Breakdown</div>
+        <div class="detailed-box">${d.detailed_summary}</div>
+        ${d.connections && d.connections.length ? `
+          <div class="section-heading">Key Connections</div>
+          <div class="connections-list">${(d.connections || []).map(c => `<div class="connection-item">${c}</div>`).join('')}</div>
+        ` : ''}
+      </div>
+    `;
+  }
+
+  // ── Bullet Summary ──
+  if (d.bullet_summary && (style === 'all' || style === 'bullet')) {
+    const bullets = d.bullet_summary;
+    html += `
+      <div id="sum-view-bullets" class="sum-view" ${style === 'all' ? 'style="display:none"' : ''}>
+        <div class="section-heading">Key Points — Quick Reference</div>
+        <ul class="bullet-list">
+          ${bullets.map((b, i) => `
+            <li>
+              <span class="bullet-num">${i+1}</span>
+              <span>${b}</span>
+            </li>
+          `).join('')}
+        </ul>
+        ${d.key_definitions && d.key_definitions.length ? `
+          <div class="section-heading">Key Definitions</div>
+          <div class="definitions-grid">
+            ${d.key_definitions.map(def => `
+              <div class="def-card">
+                <div class="def-term">${def.term}</div>
+                <div class="def-text">${def.definition}</div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }
+
+  // ── Mind Map ──
+  if (d.mindmap && (style === 'all' || style === 'mindmap')) {
+    const mm = d.mindmap;
+    const branchesHTML = (mm.branches || []).map(b => `
+      <div class="mindmap-branch">
+        <div class="branch-title">${b.topic}</div>
+        <ul class="branch-subtopics">
+          ${(b.subtopics || []).map(s => `<li>${s}</li>`).join('')}
+        </ul>
+      </div>
+    `).join('');
+    html += `
+      <div id="sum-view-mindmap" class="sum-view" ${style === 'all' ? 'style="display:none"' : ''}>
+        <div class="section-heading">Mind Map — Visual Overview</div>
+        <div class="mindmap-container">
+          <div class="mindmap-root">${mm.root || d.title || 'Core Topic'}</div>
+          <div class="mindmap-branches">${branchesHTML}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ── Extras (dates, gaps, tips) ── only shown in 'all' mode
+  if (style === 'all') {
+    const hasDates = d.important_dates_or_numbers && d.important_dates_or_numbers.length;
+    const hasGaps  = d.gaps && d.gaps.length;
+    const hasTips  = d.revision_tips && d.revision_tips.length;
+
+    html += `<div id="sum-view-extras" class="sum-view" style="display:none">`;
+
+    if (d.key_definitions && d.key_definitions.length) {
+      html += `
+        <div class="section-heading">Key Definitions</div>
+        <div class="definitions-grid">
+          ${d.key_definitions.map(def => `
+            <div class="def-card">
+              <div class="def-term">${def.term}</div>
+              <div class="def-text">${def.definition}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    if (hasDates) {
+      html += `
+        <div class="section-heading">Important Dates & Numbers</div>
+        <div class="dates-grid">
+          ${d.important_dates_or_numbers.map(item => `
+            <div class="date-pill">
+              <span class="date-val">${item.value}</span>
+              <span class="date-ctx">${item.context}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    if (hasGaps) {
+      html += `
+        <div class="section-heading">Gaps in Your Notes</div>
+        <div class="gaps-list">
+          ${d.gaps.map(g => `<div class="gap-item">${g}</div>`).join('')}
+        </div>
+      `;
+    }
+
+    if (hasTips) {
+      html += `
+        <div class="section-heading">Revision Tips</div>
+        <div class="tips-list">
+          ${d.revision_tips.map(t => `<div class="tip-card">${t}</div>`).join('')}
+        </div>
+      `;
+    }
+
+    html += `</div>`;
+  }
+
+  // ── Action buttons ──
+  html += `
+    <div class="btn-row" style="margin-top:2rem">
+      <button class="btn btn-secondary" onclick="switchTabDirect('flashcards')">⚡ Make Flashcards</button>
+      <button class="btn btn-secondary" onclick="switchTabDirect('quiz')">🎯 Take a Quiz</button>
+    </div>
+  `;
+
+  document.getElementById('sum-results').innerHTML = html;
+  document.getElementById('sum-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function showSumView(view, btn) {
+  // Hide all views
+  document.querySelectorAll('.sum-view').forEach(v => v.style.display = 'none');
+  // Deactivate all tabs
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+  // Show selected view
+  const el = document.getElementById('sum-view-' + view);
+  if (el) el.style.display = 'block';
+  btn.classList.add('active');
+}
 
 // ─── FILE UPLOAD ──────────────────────────────────────────────
 function toggleUpload(key) {
@@ -1675,8 +2322,8 @@ function processFile(file, key) {
     alert('Unsupported file type. Please use .txt, .md, .pdf, .docx, or .rtf'); return;
   }
   showFileBadge(key, file.name);
-  if (ext === 'pdf') { readPDF(file, key); }
-  else if (ext === 'docx') { readDOCX(file, key); }
+  if (ext === 'pdf') readPDF(file, key);
+  else if (ext === 'docx') readDOCX(file, key);
   else {
     const reader = new FileReader();
     reader.onload = e => {
@@ -1722,7 +2369,14 @@ async function extractDOCX(file, key) {
   } catch (e) { alert('Could not read .docx file. Try saving as .txt.'); }
 }
 function setTextarea(key, text) {
-  const id = key==='notes'?'notes-input':key==='syllabus'?'syllabus-input':key==='fc-notes'?'fc-notes-input':'quiz-notes-input';
+  const idMap = {
+    'notes': 'notes-input',
+    'syllabus': 'syllabus-input',
+    'fc-notes': 'fc-notes-input',
+    'quiz-notes': 'quiz-notes-input',
+    'sum-notes': 'sum-notes-input'
+  };
+  const id = idMap[key];
   const ta = document.getElementById(id);
   if (ta) { ta.value = text; ta.dispatchEvent(new Event('input')); }
   const area = document.getElementById(key + '-upload-area');
@@ -1737,13 +2391,19 @@ function showFileBadge(key, fileName) {
   badge.innerHTML = `<span class="upload-file-name">📄 ${fileName} <button class="upload-remove" onclick="clearFile('${key}')">✕</button></span>`;
 }
 function clearFile(key) {
-  const id = key==='notes'?'notes-input':key==='syllabus'?'syllabus-input':key==='fc-notes'?'fc-notes-input':'quiz-notes-input';
+  const idMap = {
+    'notes': 'notes-input',
+    'syllabus': 'syllabus-input',
+    'fc-notes': 'fc-notes-input',
+    'quiz-notes': 'quiz-notes-input',
+    'sum-notes': 'sum-notes-input'
+  };
+  const id = idMap[key];
   const ta = document.getElementById(id); if (ta) ta.value = '';
   const badge = document.getElementById(key + '-file-badge'); if (badge) badge.style.display = 'none';
   const inp = document.getElementById(key + '-file-input'); if (inp) inp.value = '';
   const btn = document.getElementById(key + '-upload-toggle'); if (btn) btn.textContent = '📎 Upload File';
 }
-
 </script>
 </body>
 </html>
