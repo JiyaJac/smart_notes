@@ -252,25 +252,21 @@ answers (array of strings): User’s selected answers in order corresponding to 
 ## Project Demo
 
 ### Video
-[Add your demo video link here - YouTube, Google Drive, etc.]
+"G:\My Drive\Hackathon\Screen Recording 2026-02-28 082103.mp4"
 
 ---
 
 ## Team Contributions
 
-- [Name 1]: [Specific contributions - e.g., Frontend development, API integration, etc.]
-- [Name 2]: [Specific contributions - e.g., Backend development, Database design, etc.]
+- Jiya Mary Jacob:Backend development using Flask, API creation for note analysis, flashcards, quizzes, and evaluation, Integration with Groq AI for NLP processing, JSON responses, and backend logic, Environment setup and deployment preparation
+
+- Joylin Alex:Frontend development using HTML, CSS, and JavaScript, Designing user interface for note submission, flashcards, quizzes, and mindmap display, Implementing interactive visualizations like mindmaps
 
 ---
 
 ## License
 
-This project is licensed under the [LICENSE_NAME] License - see the [LICENSE](LICENSE) file for details.
-
-**Common License Options:**
-- MIT License (Permissive, widely used)
-- Apache 2.0 (Permissive with patent grant)
-- GPL v3 (Copyleft, requires derivative works to be open source)
+This project is licensed under the **MIT License** – see the [LICENSE](./LICENSE) file for details.
 
 ---
 
