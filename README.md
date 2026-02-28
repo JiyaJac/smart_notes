@@ -35,7 +35,7 @@ Students often take notes in various formats and styles, but the effectiveness o
 - Frameworks used: Flask  
 - Libraries used:  Groq, Flask-CORS, python-dotenv, Jinja2  
 - Tools used: VS Code, Git, Vercel (for deployment)
-- 
+
 ---
 
 ## Features
@@ -85,8 +85,7 @@ Open http://localhost:10000 to access the HTML frontend.
 
 #### Screenshots (Add at least 3)
 
-![Screenshot1](Add screenshot 1 here with proper name)
-*Add caption explaining what this shows*
+ <img src="./1.png">
 
 ![Screenshot2](Add screenshot 2 here with proper name)
 *Add caption explaining what this shows*
