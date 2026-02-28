@@ -138,37 +138,103 @@ Open http://localhost:10000 to access the HTML frontend.
 
 #### API Documentation
 
-**Base URL:** `https://api.yourproject.com`
+**Base URL:** 'https://smart-notes-xe6l.vercel.app/'
 
 ##### Endpoints
 
 **GET /api/endpoint**
-- **Description:** [What it does]
+- **Description:** Submits student notes for analysis. Returns a JSON report with completeness, clarity, structure, strengths, weaknesses, and improvement suggestions.
 - **Parameters:**
-  - `param1` (string): [Description]
-  - `param2` (integer): [Description]
+1. Analyze Notes (POST /api/analyze)
+Parameters (in request body JSON):
+notes (string): The content of the student’s notes to analyze. Required.
+subject (string, optional): The subject or topic context for more accurate analysis.
+2. Generate Flashcards (POST /api/flashcards)
+Parameters (in request body JSON):
+notes (string): The student notes to generate flashcards from. Required.
+num_flashcards (integer): Number of flashcards to generate. Default is 10.
+3. Generate Quiz (POST /api/quiz)
+Parameters (in request body JSON):
+notes (string): Notes used to generate quiz questions. Required.
+num_questions (integer): Number of multiple-choice questions to generate. Default is 8.
+4. Evaluate Quiz (POST /api/evaluate-quiz)
+Parameters (in request body JSON):
+quiz_id (string): Unique ID of the quiz being evaluated. Required.
+answers (array of strings): User’s selected answers in order corresponding to quiz questions. Required.
 - **Response:**
-```json
 {
   "status": "success",
-  "data": {}
+  "data": {
+    "overall_score": 87,
+    "topic_coverage": {
+      "topic1": "complete",
+      "topic2": "partial",
+      "topic3": "missing"
+    },
+    "strengths": ["topic1", "topic4"],
+    "weaknesses": ["topic2"],
+    "suggestions": ["Expand topic2 with examples", "Organize topic3"]
+  }
 }
-```
-
+{
+  "status": "success",
+  "data": [
+    {
+      "question": "What is X?",
+      "answer": "X is ...",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Explain Y.",
+      "answer": "Y is ...",
+      "difficulty": "medium"
+    }
+  ]
+{
+  "status": "success",
+  "data": [
+    {
+      "question": "What is Z?",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "correct_answer": "Option B",
+      "topic": "Topic3",
+      "difficulty": "hard"
+    }
+  ]
+{
+  "status": "success",
+  "data": {
+    "score": 6,
+    "total_questions": 8,
+    "weak_topics": ["Topic2"],
+    "strong_topics": ["Topic1", "Topic4"],
+    "recommendations": ["Review Topic2 concepts", "Revise examples from Topic3"]
+  }
+}
 **POST /api/endpoint**
-- **Description:** [What it does]
+- **Description:** Submits student notes for AI analysis and returns a report with completeness, clarity, strengths, weaknesses, and improvement suggestions.
 - **Request Body:**
 ```json
 {
-  "field1": "value1",
-  "field2": "value2"
+  "notes": "Content of student's notes",
+  "subject": "Optional subject or topic for context"
 }
 ```
 - **Response:**
 ```json
 {
   "status": "success",
-  "message": "Operation completed"
+  "data": {
+    "overall_score": 87,
+    "topic_coverage": {
+      "topic1": "complete",
+      "topic2": "partial",
+      "topic3": "missing"
+    },
+    "strengths": ["topic1", "topic4"],
+    "weaknesses": ["topic2"],
+    "suggestions": ["Expand topic2 with examples", "Organize topic3"]
+  }
 }
 ```
 
