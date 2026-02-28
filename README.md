@@ -122,6 +122,7 @@ Open http://localhost:10000 to access the HTML frontend.
  **generating summary along with mind maps based on user preference.**
 
  <img src="./18.png">
+ 
 **chatting with an ai on topics related to the content uploaded.**
 
  
@@ -129,12 +130,13 @@ Open http://localhost:10000 to access the HTML frontend.
 
 **System Architecture:**
 
-![Architecture Diagram](docs/architecture.png)
+<img src="./19.png">
 *Explain your system architecture - components, data flow, tech stack interaction*
 
 **Application Workflow:**
 
-![Workflow](docs/workflow.png)
+<img src="./20.png">
+<img src="./21.png">
 *Add caption explaining your workflow*
 
 ---
