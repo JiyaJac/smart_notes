@@ -93,9 +93,16 @@ Open http://localhost:10000 to access the HTML frontend.
 
 **evaluating various diffrent notes with the reference syllabus and generating a scoring system**
  
+ 
+ 
  <img src="./6.png">
  <img src="./7.png">
  <img src="./8.png">
+
+ **generating flash cards based on the input content**
+
+
+
  <img src="./9.png">
  <img src="./10.png">
  <img src="./11.png">
