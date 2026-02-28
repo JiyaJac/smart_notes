@@ -107,6 +107,12 @@ Open http://localhost:10000 to access the HTML frontend.
  <img src="./10.png">
  <img src="./11.png">
  <img src="./12.png">
+
+ **generating quiz questions bassed on the topic. The answers are then evaluated and the weak areas are identified suggesting appropriate improvement.**
+
+
+
+ 
  <img src="./13.png">
  <img src="./14.png">
  <img src="./15.png">
