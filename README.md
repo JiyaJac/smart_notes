@@ -119,6 +119,10 @@ Open http://localhost:10000 to access the HTML frontend.
  <img src="./16.png">
  <img src="./17.png">
 
+ **generating summary along with mind maps based on user preference.**
+
+ <img src="./18.png">
+**chatting with an ai on topics related to the content uploaded.**
 
  
 #### Diagrams
