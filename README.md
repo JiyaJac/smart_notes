@@ -2,27 +2,27 @@
   <img src="./img.png" alt="Project Banner" width="100%">
 </p>
 
-# [Project Name] 🎯
+# SmartNotes 🎯
 
 ## Basic Details
 
-### Team Name: [Name]
+### Team Name: Stack
 
 ### Team Members
-- Member 1: [Name] - [College]
-- Member 2: [Name] - [College]
+- Member 1: Jiya Mary Jacob - Model Engineering college
+- Member 2: Joylin Alex - Model Engineering college
 
 ### Hosted Project Link
-[mention your project hosted link here]
+https://smart-notes-xe6l.vercel.app/
 
 ### Project Description
-[2-3 lines about what your project does]
+“Academic Notes Analyzer: A Flask + HTML app with an AI assistant that evaluates student notes, generates flashcards, quizzes, and mindmap summaries, providing personalized feedback to highlight strengths, weaknesses, and study suggestions for smarter learning.”
 
 ### The Problem statement
-[What problem are you solving?]
+Students often take notes in various formats and styles, but the effectiveness of these notes varies widely due to inconsistencies, missing concepts, and poor structure. This makes it difficult for students to evaluate the quality of their notes, identify gaps in their learning, and revise efficiently.
 
 ### The Solution
-[How are you solving it?]
+ SmartNotes addresses this challenge by using artificial intelligence and natural language processing to analyze and assess the clarity, completeness, and structure of student notes. The system compares notes against syllabus standards or reference materials, highlights missing topics, and generates personalized flashcards and quizzes for effective revision. By providing actionable feedback and interactive learning resources, SmartNotes helps students study smarter, retain knowledge better, and improve overall academic performance.
 
 ---
 
@@ -31,25 +31,22 @@
 ### Technologies/Components Used
 
 **For Software:**
-- Languages used: [e.g., JavaScript, Python, Java]
-- Frameworks used: [e.g., React, Django, Spring Boot]
-- Libraries used: [e.g., axios, pandas, JUnit]
-- Tools used: [e.g., VS Code, Git, Docker]
-
-**For Hardware:**
-- Main components: [List main components]
-- Specifications: [Technical specifications]
-- Tools required: [List tools needed]
-
+- Languages used: Python, HTML, CSS, JavaScript
+- Frameworks used: Flask  
+- Libraries used:  Groq, Flask-CORS, python-dotenv, Jinja2  
+- Tools used: VS Code, Git, Vercel (for deployment)
+- 
 ---
 
 ## Features
 
 List the key features of your project:
-- Feature 1: [Description]
-- Feature 2: [Description]
-- Feature 3: [Description]
-- Feature 4: [Description]
+- **Notes Analysis:** Evaluate notes for completeness, clarity, structure, and topic coverage using AI.  
+- **Flashcard Generation:** Create 10 AI-powered flashcards from notes with easy, medium, and hard difficulty.  
+- **Quiz Creation & Evaluation:** Generate 8 multiple-choice questions and evaluate answers, highlighting weak and strong topics.  
+- **Mindmap Summary:** Automatically generate a mindmap summary for quick revision.  
+- **AI Assistant:** Provides personalized suggestions, improvements, and study guidance.  
+- **Frontend:** HTML/CSS/JS interface for submitting notes and viewing analysis, flashcards, quizzes, and summaries.  
 
 ---
 
@@ -59,21 +56,26 @@ List the key features of your project:
 
 #### Installation
 ```bash
-[Installation commands - e.g., npm install, pip install -r requirements.txt]
+# Clone the repository
+git clone https://github.com/JiyaJac/smartnotes.git
+cd smartnotes/backend
+
+# Install Python dependencies
+pip install -r requirements.txt
+
+# create .env file for API key
+echo "GROQ_API_KEY=your_api_key_here" > .env
 ```
 
 #### Run
 ```bash
-[Run commands - e.g., npm start, python app.py]
+# Run the Flask backend
+
+python app.py
 ```
+Open http://localhost:10000 to access the HTML frontend.
 
-### For Hardware:
 
-#### Components Required
-[List all components needed with specifications]
-
-#### Circuit Setup
-[Explain how to set up the circuit]
 
 ---
 
