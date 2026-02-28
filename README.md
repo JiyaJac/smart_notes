@@ -86,13 +86,28 @@ Open http://localhost:10000 to access the HTML frontend.
 #### Screenshots (Add at least 3)
 
  <img src="./1.png">
+ <img src="./2.png">
+ <img src="./3.png">
+ <img src="./4.png">
+ <img src="./5.png">
 
-![Screenshot2](Add screenshot 2 here with proper name)
-*Add caption explaining what this shows*
+**evaluating various diffrent notes with the reference syllabus and generating a scoring system**
+ 
+ <img src="./6.png">
+ <img src="./7.png">
+ <img src="./8.png">
+ <img src="./9.png">
+ <img src="./10.png">
+ <img src="./11.png">
+ <img src="./12.png">
+ <img src="./13.png">
+ <img src="./14.png">
+ <img src="./15.png">
+ <img src="./16.png">
+ <img src="./17.png">
 
-![Screenshot3](Add screenshot 3 here with proper name)
-*Add caption explaining what this shows*
 
+ 
 #### Diagrams
 
 **System Architecture:**
